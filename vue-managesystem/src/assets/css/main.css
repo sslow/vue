@@ -1,0 +1,46 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+ul,
+li {
+  list-style: none;
+}
+
+.clearfix:after {
+  content: '.';
+  visibility: hidden;
+  height: 0;
+  width: 0;
+  clear: both;
+  display: block
+}
+
+body {
+  color: #303133;
+  font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+h2 {
+  text-align: center;
+  color: #155e8c;
+  margin-bottom: 20px;
+}
+
+.crumbs {
+  padding: 5px;
+}
+
+input[type=text] {
+  -webkit-appearance: textfield;
+  outline: none;
+  padding: 5px;
+  border: 0;
+  -webkit-writing-mode: horizontal-tb !important;
+  font-size: inherit;
+  color: inherit;
+  display: block
+}
+
+/* pink syle */
