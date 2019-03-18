@@ -51,17 +51,35 @@
         </div>
         <div class="todo-bottom">
           <ul>
-            <li v-for="(item,index) in filteredTodos" :class="{completedClass:item.completed}"><input  v-model="item.completed" type="checkbox"> <label> {{item.title}} </label><i class="el-icon-close" @click="removeTodo(index)"></i></li>
+            <li v-for="(item,index) in filteredTodos" :class="{completedClass:item.completed}"><input v-model="item.completed" type="checkbox"> <label> {{item.title}} </label><i class="el-icon-close" @click="removeTodo(index)"></i></li>
           </ul>
         </div>
       </div>
       <div class="operate-bar"><span :class="{selected:currentKey=='all'}" @click="currentKey='all'">all</span><span :class="{selected:currentKey=='completed'}"  @click="currentKey='completed'"> completed</span><span :class="{selected:currentKey=='active'}"  @click="currentKey='active'">active </span> </div>
     </div>
+    <div class="forecast-box box">
+      <div class="w-show">
+          <h2>{{weather.wendu}}C°</h2>
+          <div>
+            <ul>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+              <li></li>
+            </ul>
+          </div>
+          <div></div>
+      </div>
+      <div class="w-charts">
+        
+      </div>
+    </div>
   </div>
 </template>
 <script>
 import { Store } from '@/assets/js/store'
-
+import { citycode } from '@/assets/js/citycode'
 const filter = {
   all(todos) {
     return todos;
@@ -83,8 +101,9 @@ export default {
       STORE_KEY: 'todo',
       todos: [],
       newTodo: '',
-      currentKey:'all',
-      msg: 'Welcome to Your Vue.js App'
+      currentKey: 'all',
+      msg: 'Welcome to Your Vue.js App',
+      weather:{},
     }
   },
   watch: {
@@ -96,17 +115,31 @@ export default {
   },
   methods: {
     addTodo() {
-
-      const title  = this.newTodo.trim()
-      if(!title){
-          return false;
+      const title = this.newTodo.trim()
+      if (!title) {
+        return false;
       }
       this.todos.push({ title: title })
       this.newTodo = '';
       this.currentKey = 'all'
     },
-    removeTodo(index){
-        this.todos.splice(index,1)
+    removeTodo(index) {
+      this.todos.splice(index, 1)
+    },
+    fetchWeatherData() {
+      let cityname = this.getLocalCity();
+      this.$axios.get(`http://wthrcdn.etouch.cn/weather_mini?citykey=${citycode[cityname]}`).then(res => {
+
+        this.weather=res.data.data;
+         console.log(this.weather);
+      }, err => {
+      })
+    },
+    getLocalCity() {
+      // var locaCity = new BMap.LocalCity().get(function(rs){
+      //  var currentCity = rs.name.replace('市','');
+      return '深圳';
+
     }
   },
   computed: {
@@ -116,6 +149,7 @@ export default {
   },
   created() {
     this.todos = Store.get(this.STORE_KEY);
+    this.fetchWeatherData();
   }
 }
 
@@ -212,14 +246,15 @@ export default {
   top: 12px;
 }
 
-.todo-container{
+.todo-container {
   position: relative;
 }
 
 .todo-bottom {
-  max-height:500px;
+  max-height: 500px;
   overflow: auto;
 }
+
 .todo-bottom li {
   line-height: 2em;
   border-bottom: 1px solid #e3e3e3;
@@ -229,26 +264,60 @@ export default {
   float: right;
   margin-top: 8px;
 }
-.todo-bottom li input[type=checkbox]{display: inline-block;vertical-align: middle;}
-.todo-bottom li label{
+
+.todo-bottom li input[type=checkbox] {
   display: inline-block;
-  width:90%;
+  vertical-align: middle;
+}
+
+.todo-bottom li label {
+  display: inline-block;
+  width: 90%;
   overflow: hidden;
   text-overflow: ellipsis;
   vertical-align: middle;
 }
+
 .todo-bottom li.completedClass label {
   text-decoration: line-through;
-  
+
 }
 
-.operate-bar{position: absolute;bottom:0;padding:20px 0;}
-.operate-bar span{display: inline-block;margin-right:20px;cursor: pointer }
-.operate-bar span.selected{border-bottom:2px solid #155e8c;}
+.operate-bar {
+  position: absolute;
+  bottom: 0;
+  padding: 20px 0;
+}
+
+.operate-bar span {
+  display: inline-block;
+  margin-right: 20px;
+  cursor: pointer
+}
+
+.operate-bar span.selected {
+  border-bottom: 2px solid #155e8c;
+}
 
 
-.todo-bottom>ul::-webkit-scrollbar-track{border-radius: 3px;background-color: #ffffff;}
-.todo-bottom>ul::-webkit-scrollbar{width: 5px; height:5px; background-color: #ffffff;}
-.todo-bottom>ul::-webkit-scrollbar-thumb{border-radius: 3px;background-color: #b0b6bc; }
-.todo-bottom>ul::-webkit-scrollbar-track  { display: none; }
+.todo-bottom>ul::-webkit-scrollbar-track {
+  border-radius: 3px;
+  background-color: #ffffff;
+}
+
+.todo-bottom>ul::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+  background-color: #ffffff;
+}
+
+.todo-bottom>ul::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background-color: #b0b6bc;
+}
+
+.todo-bottom>ul::-webkit-scrollbar-track {
+  display: none;
+}
+
 </style>
